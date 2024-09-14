@@ -1,0 +1,39 @@
+dependencies:
+  espressif/led_strip:
+    component_hash: 28c6509a727ef74925b372ed404772aeedf11cce10b78c3f69b3c66799095e2d
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.4'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 2.5.5
+  idf:
+    source:
+      type: idf
+    version: 5.3.1
+  m5stack/m5gfx:
+    component_hash: 9acfb70d059a137315c794b0e3db22bcb479b338d19ed60eaa658126b141a109
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.1.16
+  m5stack/m5unified:
+    component_hash: 33247909943855b9e784a52cb4ed957973246a7dd6fed5ffce202eda74c3f268
+    dependencies:
+    - name: m5stack/m5gfx
+      registry_url: https://components.espressif.com/
+      require: private
+      version: ^0.1.16
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.1.16
+direct_dependencies:
+- espressif/led_strip
+- m5stack/m5unified
+manifest_hash: 9d7b3575ad6b9963d23490e0678e260f27b9ba4bdbf3738440c746d36d8e258f
+target: esp32
+version: 2.0.0
