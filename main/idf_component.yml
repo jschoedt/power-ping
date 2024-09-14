@@ -1,7 +1,10 @@
 ## IDF Component Manager Manifest File
 dependencies:
+  espressif/mdns: "^1.4.0"
   m5stack/m5unified: "^0.1.16"
   espressif/led_strip: "^2.5.5"
+  esp32-wifi-manager:
+    git: git@github.com:huardti/esp32-wifi-manager.git
   ## Required IDF version
   #idf:
   #  version: ">=4.1.0"

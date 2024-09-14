@@ -7,6 +7,8 @@
 #include "led_strip.h"
 #include "sdkconfig.h"
 
+#include "wifi_manager.h"
+
 #define BLINK_GPIO CONFIG_BLINK_GPIO
 
 static led_strip_handle_t led_strip;
@@ -15,6 +17,9 @@ static const char *TAG = "example";
 
 void setup(void)
 {
+    /* start the wifi manager */
+    wifi_manager_start();
+  
     auto cfg = M5.config(); // Assign a structure for initializing M5Stack
     // If config is to be set, set it here
     // Example.

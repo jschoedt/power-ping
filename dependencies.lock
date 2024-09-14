@@ -1,4 +1,12 @@
 dependencies:
+  esp32-wifi-manager:
+    component_hash: 809c587c9f074ae699ee3d6fcec580873da15ed86303c8e7c7ba408ce5a1a474
+    dependencies: []
+    source:
+      git: git@github.com:huardti/esp32-wifi-manager.git
+      path: .
+      type: git
+    version: 75a5f0ac58a1ae67c3b4ca3be6a79ceb21e3aafd
   espressif/led_strip:
     component_hash: 28c6509a727ef74925b372ed404772aeedf11cce10b78c3f69b3c66799095e2d
     dependencies:
@@ -9,6 +17,16 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 2.5.5
+  espressif/mdns:
+    component_hash: af6306fe65d637a3683d1cf671508fcedd6b05f9ca029a8815abeab64001fb8d
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.4.0
   idf:
     source:
       type: idf
@@ -32,8 +50,10 @@ dependencies:
       type: service
     version: 0.1.16
 direct_dependencies:
+- esp32-wifi-manager
 - espressif/led_strip
+- espressif/mdns
 - m5stack/m5unified
-manifest_hash: 9d7b3575ad6b9963d23490e0678e260f27b9ba4bdbf3738440c746d36d8e258f
+manifest_hash: 0a2a8a7663b940d903d51f0b18112151ed707c6988933ac630354880ca91732d
 target: esp32
 version: 2.0.0
