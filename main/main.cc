@@ -9,6 +9,7 @@
 #include <esp_netif.h>
 
 #include "wifi_manager.h"
+#include "http_app.h"
 
 #define BLINK_GPIO CONFIG_BLINK_GPIO
 
@@ -16,8 +17,7 @@ static led_strip_handle_t led_strip;
 
 static const char *TAG = "example";
 
-void cb_connection_ok(void *pvParameter)
-{
+void cb_connection_ok(void *pvParameter){
   ESP_LOGI(TAG, "I have a connection!");
 
   ip_event_got_ip_t *param = (ip_event_got_ip_t *)pvParameter;
@@ -29,19 +29,36 @@ void cb_connection_ok(void *pvParameter)
   ESP_LOGI(TAG, "I have a connection and my IP is %s!", str_ip);
 }
 
+static esp_err_t settings_handler(httpd_req_t *req){
 
-void setup(void)
-{
+	/* our custom page sits at /helloworld in this example */
+	if(strcmp(req->uri, "/settings") == 0){
+
+		ESP_LOGI(TAG, "Serving page /settings");
+
+		const char* response = "<html><body><h1>settings</h1></body></html>";
+
+		httpd_resp_set_status(req, "200 OK");
+		httpd_resp_set_type(req, "text/html");
+		httpd_resp_send(req, response, strlen(response));
+	}
+	else{
+		/* send a 404 otherwise */
+		httpd_resp_send_404(req);
+	}
+
+	return ESP_OK;
+}
 
 
-
+void setup(void){
 
   /* start the wifi manager */
   wifi_manager_start();
 
       // clears memory
   wifi_manager_save_sta_config();
-
+  http_app_set_handler_hook(HTTP_GET, &settings_handler);
 
   wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_connection_ok);
 
@@ -69,8 +86,7 @@ void setup(void)
   led_strip_clear(led_strip);
 }
 
-void blink_led(int on)
-{
+void blink_led(int on){
   /* If the addressable LED is enabled */
   if (on)
   {
@@ -86,8 +102,7 @@ void blink_led(int on)
   }
 }
 
-void loop(void)
-{
+void loop(void){
   M5.delay(50);
 
   M5.update();
@@ -111,8 +126,7 @@ void loop(void)
 
 
 
-extern "C"
-{
+extern "C"{
   void loopTask(void *)
   {
     setup();
