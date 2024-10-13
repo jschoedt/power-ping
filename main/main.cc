@@ -10,12 +10,22 @@
 
 #include "wifi_manager.h"
 #include "http_app.h"
+#include <esp_sleep.h>
 
 #define BLINK_GPIO CONFIG_BLINK_GPIO
 
 static led_strip_handle_t led_strip;
 
 static const char *TAG = "example";
+
+void deepSleep(){
+  M5_LOGI("sleep start");
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)39, false);
+  esp_sleep_enable_timer_wakeup(30 * 1000 * 1000);
+  esp_deep_sleep_start();
+  //M5_LOGI("sleep end");
+  //vTaskDelete(NULL);
+}
 
 void cb_connection_ok(void *pvParameter){
   ESP_LOGI(TAG, "I have a connection!");
@@ -27,6 +37,8 @@ void cb_connection_ok(void *pvParameter){
   esp_ip4addr_ntoa(&param->ip_info.ip, str_ip, IP4ADDR_STRLEN_MAX);
 
   ESP_LOGI(TAG, "I have a connection and my IP is %s!", str_ip);
+
+  deepSleep();
 }
 
 static esp_err_t settings_handler(httpd_req_t *req){
@@ -53,11 +65,20 @@ static esp_err_t settings_handler(httpd_req_t *req){
 
 void setup(void){
 
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+  switch(wakeup_reason)
+  {
+    case ESP_SLEEP_WAKEUP_EXT0 : ESP_LOGI(TAG,"woke up by button"); break;
+    case ESP_SLEEP_WAKEUP_TIMER : ESP_LOGI(TAG,"woke up by timer"); break;
+    default :  break;
+  }
+
+
   /* start the wifi manager */
   wifi_manager_start();
 
       // clears memory
-  wifi_manager_save_sta_config();
+  //wifi_manager_save_sta_config();
   http_app_set_handler_hook(HTTP_GET, &settings_handler);
 
   wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_connection_ok);
@@ -107,6 +128,8 @@ void loop(void){
 
   M5.update();
 
+  //M5.Power.deepSleep(10 * 1000 * 1000, true);
+
   static constexpr const char *const names[] = {"none", "wasHold", "wasClicked", "wasPressed", "wasReleased", "wasDeciedCount"};
 
   /// BtnA,BtnB,BtnC,BtnEXT: "isPressed"/"wasPressed"/"isReleased"/"wasReleased"/"wasClicked"/"wasHold"/"isHolding"  can be use.
@@ -123,8 +146,6 @@ void loop(void){
 
   blink_led(state);
 }
-
-
 
 extern "C"{
   void loopTask(void *)
